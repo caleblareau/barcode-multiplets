@@ -18,6 +18,16 @@ prop_droplets_multiplet <- function(pub_df){
   table(summary_df$n_beads_one)/length(summary_df$n_beads_one)
 }
 
+LCSCL_split <- function(a,b){
+  a <- gsub("-1", "", a)
+  b <- gsub("-1", "", b)
+  
+  as = strsplit(a, "")[[1]]
+  bs = strsplit(b, "")[[1]]
+  rle_out <- rle(as == bs)
+  return(max(rle_out$lengths[rle_out$values]))
+}
+
 # Chi-square tests
 chisquare_cluster <- function(pub_df){
   pub_chisq_mat <- pub_df %>% mutate(Cluster = as.factor(as.character(Cluster)),
@@ -43,7 +53,7 @@ hamming_distance_count <- function(pub_df, what){
       
       # Determine pair-wise Hamming distances
       dist_vec <- sapply(1:dim(comb_mat)[2], function(i){
-        stringdist(comb_mat[1,i], comb_mat[2,i])
+        LCSCL_split(comb_mat[1,i], comb_mat[2,i])
       })
       data.frame(
         dist_vec, 
