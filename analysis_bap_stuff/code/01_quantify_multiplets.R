@@ -121,7 +121,7 @@ bdf$n_beads <- str_sub(bdf$bap_id,-2,-1) %>% as.character() %>% as.numeric
 tenx_5k <- merge(bdf, cdf)
 
 # Make a bar plot of similar cluster assignments
-if(FALSE){
+if(TRUE){
   prop_cluster_shared_multiplet(sai_df)
   prop_cluster_shared_multiplet(tenx_5k)
   
@@ -152,17 +152,17 @@ if(FALSE){
     labs(x = "", y = "% pairs in same cluster") +
     scale_y_continuous(expand = c(0,0),  limits = c(0, 100)) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position = position_dodge(width = 0.7)) 
-  cowplot::ggsave(p1, file = "../plots/chromatin_cluster_permuted.pdf", width = 2.5, height = 1.7)
+  cowplot::ggsave(p1, file = "../plots/chromatin_cluster_permuted.pdf", width = 2, height = 2)
   
 }
 
 if(FALSE){
-  100-prop_droplets_multiplet(pub_df) * 100
+  100-prop_droplets_multiplet(tenx_5k) * 100
   100-prop_droplets_multiplet(sai_df) * 100
-  100-prop_bead_barcodes_in_multiplet(pub_df) * 100
+  100-prop_bead_barcodes_in_multiplet(tenx_5k) * 100
   100-prop_bead_barcodes_in_multiplet(sai_df) * 100
   
-  public_df_multiplet_count <- data.frame(prop_bead_barcodes_in_multiplet(pub_df) * 100)
+  public_df_multiplet_count <- data.frame(prop_bead_barcodes_in_multiplet(tenx_5k) * 100)
   sai_df_multiplet_count <- data.frame(prop_bead_barcodes_in_multiplet(sai_df) * 100)
   
   p1 <- ggplot(public_df_multiplet_count, aes(x = Var1, y = Freq)) +
@@ -171,7 +171,7 @@ if(FALSE){
     labs(x = "# beads / multiplet", y = "% of total barcodes") +
     scale_y_continuous(expand = c(0,0),  limits = c(0, 87)) 
   
-  cowplot::ggsave(p1, file = "../plots/public_barcode_multiplets.pdf", width = 1.6, height = 1.6)
+  cowplot::ggsave(p1, file = "../plots/public_barcode_multiplets.pdf", width = 1.6, height = 1.7)
   
   p1 <- ggplot(sai_df_multiplet_count, aes(x = Var1, y = Freq)) +
     geom_bar(fill = "lightgrey", color = "black", stat = "identity", width = 0.7) +
@@ -179,7 +179,7 @@ if(FALSE){
     labs(x = "# beads / multiplet", y = "% of total barcodes") +
     scale_y_continuous(expand = c(0,0),  limits = c(0, 87)) 
   
-  cowplot::ggsave(p1, file = "../plots/sai_barcode_multiplets.pdf", width = 1.6, height = 1.6)
+  cowplot::ggsave(p1, file = "../plots/sai_barcode_multiplets.pdf", width = 1.6, height = 1.7)
   
 }
 

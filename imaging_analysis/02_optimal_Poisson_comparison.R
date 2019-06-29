@@ -39,3 +39,28 @@ p2 <- ggplot(sem_df, aes(x = numberOfBeads, y = prop)) +
 
 cowplot::ggsave(cowplot::plot_grid(p1, p2), 
                 file = "out_pdfs/barcharts_outPDFs.pdf", width = 3.7, height = 2)
+
+long_raw %>% 
+  mutate(b = rep(c(0, 1, 2, 3,4), 10)) %>%
+  filter(b != 0) %>% mutate(isOne = b == 1) %>%
+  mutate(value2 = b*value) %>%
+  group_by(isOne, variable) %>% 
+  summarize(totalBeadsFOV = sum(value2)) %>% 
+  ungroup() %>%
+  group_by(variable) %>% 
+  mutate(prop = totalBeadsFOV/sum(totalBeadsFOV) *100) %>% 
+  group_by(isOne) %>% 
+  summarize(valueSum = sum(totalBeadsFOV), sem = sd(prop)/sqrt(n())) %>% 
+  mutate(prop = valueSum/sum(valueSum) * 100) %>% mutate(Affected = c("Yes", "No")) -> odf
+
+
+p3 <- ggplot(odf, aes(x = Affected, y = prop)) +
+  geom_bar(fill = "lightgrey", color = "black", stat = "identity", width = 0.7) +
+  pretty_plot(fontsize = 8) + L_border() +
+  geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
+  ggtitle("  ") + labs(x = "# beads / droplet", y = "% of barcodes") +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 75)) 
+
+cowplot::ggsave(p3, 
+                file = "out_pdfs/affected_barcodes.pdf", width = 1.5, height = 2)
+
