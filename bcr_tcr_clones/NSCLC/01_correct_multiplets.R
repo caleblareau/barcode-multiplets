@@ -10,7 +10,7 @@ one_multinom_generator <- function(prob_vec){
 }
 
 # Filter down for consensus clonotypes
-bcell_clones <- read.table("../data/nsclc/vdj_v1_hs_nsclc_t_all_contig_annotations.csv",
+bcell_clones <- read.table("../data/nsclc/vdj_v1_hs_nsclc_b_all_contig_annotations.csv",
                            sep = ",", header = TRUE, stringsAsFactors = FALSE)
 bcell_clones %>% filter(is_cell == "True"  & raw_clonotype_id != "None") %>%
   dplyr::select(barcode, raw_clonotype_id) %>% distinct() %>%
@@ -103,5 +103,5 @@ p2 <- ggplot(total_df, aes(x = group, y = prop, fill = what)) +
   theme(legend.position = "none")
 
 
-cowplot::ggsave(cowplot::plot_grid(p2, ncol = 1), file = "TCR_adjusted.pdf", width = 2, height = 1.3)
+cowplot::ggsave(cowplot::plot_grid(p2, ncol = 1), file = "plots/BCR_adjusted.pdf", width = 2, height = 1.3)
 
