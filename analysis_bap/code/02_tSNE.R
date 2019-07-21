@@ -78,4 +78,20 @@ p3 <- ggplot(tenx_5k %>% arrange(desc(bc9)), aes(x = TSNE.1, y = TSNE.2, color =
 
 cowplot::ggsave(p3, file = "../plots/tSNE_bc9.pdf", width = 1.8, height = 1.8)
 
+# Look at additional multiplets in the supplement
+#rest <- tenx_5k %>% filter(n_beads >= 6 & n_beads < 9) %>% arrange(n_beads,bap_id) %>% pull(bap_id) %>% unique() %>% as.character()
+anno_these <- c("atac_v1_pbmc_5k_possorted_bam_BC2312_N08","atac_v1_pbmc_5k_possorted_bam_BC0373_N08",   "atac_v1_pbmc_5k_possorted_bam_BC4076_N07",
+                "atac_v1_pbmc_5k_possorted_bam_BC4341_N06", "atac_v1_pbmc_5k_possorted_bam_BC2839_N06", "atac_v1_pbmc_5k_possorted_bam_BC0809_N06", 
+                 "atac_v1_pbmc_5k_possorted_bam_BC4330_N06")
+trans <- paste0("Multiplet", as.character(3:9)); names(trans) <- anno_these
 
+#tenx_5k %>% filter(bap_id %in% anno_these) %>%  arrange(n_beads,bap_id)
+tenx_5k$bcnew <- ifelse(tenx_5k$bap_id %in% anno_these, trans[as.character(tenx_5k$bap_id)], "other")
+p4 <- ggplot(tenx_5k %>% arrange(desc(bcnew)), aes(x = TSNE.1, y = TSNE.2, color = bcnew)) +
+  geom_point(size = 0.6)+
+  pretty_plot(fontsize = 7) + L_border() +
+  labs(x = "t-SNE1", y = "t-SNE2", color = "" ) +
+  scale_color_manual(values = c("red","orange3", "yellow4", "green3", "dodgerblue2", "purple2", "navy",  "lightgrey"))
+cowplot::ggsave(p4, file = "../plots/tSNE_bcSupp.pdf", width = 2.9, height = 1.9)
+
+tenx_5k %>% filter(bap_id %in% anno_these | n_beads == 9) %>%  arrange(desc(n_beads),bap_id)
