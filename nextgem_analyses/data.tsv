@@ -1,0 +1,5 @@
+Link	Cells	Technology	Number	DoubletRate	nUniqueAfterBap	nUniqueBeforeBap
+https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_pbmc_5k_v1	Pbmc	v1.0	5k	18.9	4245	5234
+https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_pbmc_5k_nextgem	Pbmc	v1.1	5k	21.6	3622	4621
+https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_pbmc_10k_v1	Pbmc	v1.0	10k	12.5	7139	8161
+https://support.10xgenomics.com/single-cell-atac/datasets/1.1.0/atac_pbmc_10k_nextgem	Pbmc	v1.1	10k	12.2	9000	10247
