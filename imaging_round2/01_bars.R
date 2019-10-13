@@ -71,12 +71,35 @@ plot_df <- data.frame(
   value = c(27.1, 4.5, 2.5, 11.7, 72.9, 95.5, 97.5, 88.3),
   doublet = c(rep("Yes", 4), rep("No", 4))
 )
+mean_df <- plot_df %>% group_by(doublet) %>% summarize(sem = sd(value)/sqrt(n()), value = mean(value))
 pout <- ggplot(plot_df, aes(x = doublet, y = value, color = dataset)) +
-  geom_quasirandom() + 
+  geom_bar(data = mean_df, color = "black", fill = "lightgrey", stat = "identity", width = 0.7)+
+  geom_errorbar(data = mean_df, aes(ymin=value-sem, ymax=value+sem), width=.2, color = "black") +
+  geom_quasirandom(size = 0.5) + 
   pretty_plot(fontsize = 8) + L_border() +
-  ggtitle("  ") + labs(x = "affected by doublet", y = "% of barcodes", color = "Dataset") +
+  ggtitle("  ") + labs(x = "affected by doublet", y = "% of barcodes", color = "") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 100)) 
 
 cowplot::ggsave(pout, 
                 file = "out_pdfs/affected_barcodes.pdf", width = 2.3, height = 2)
+
+beads_df <- data.frame(
+  dataset = rep(c("Rep1", "Rep2", "Rep3", "Zheng"), 3),
+  value = c(28.1, 14.3, 7.11, 15, 63.5, 84.2, 92.1, 80, 8.36, 1.5, 0.8, 5),
+  nBeads = c(rep("0", 4), rep("1", 4), rep("2+", 4))
+)
+
+mean_df2 <- beads_df %>% group_by(nBeads) %>% summarize(sem = sd(value)/sqrt(n()), value = mean(value))
+
+pouts2 <- ggplot(beads_df, aes(x = nBeads, y = value, color = dataset)) +
+  geom_bar(data = mean_df2, color = "black", fill = "lightgrey", stat = "identity", width = 0.7)+
+  geom_errorbar(data = mean_df2, aes(ymin=value-sem, ymax=value+sem), width=.2, color = "black") +
+  geom_quasirandom(size = 0.5) + 
+  pretty_plot(fontsize = 8) + L_border() +
+  ggtitle("  ") + labs(x = "# beads / droplet", y = "% of droplets", color = "") +
+  scale_y_continuous(expand = c(0,0), limits = c(0, 100)) + theme(legend.position = "none")
+
+cowplot::ggsave(pouts2, 
+                file = "out_pdfs/beads_per_droplet.pdf", width = 2, height = 2)
+
 
