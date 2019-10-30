@@ -63,8 +63,7 @@ p3 <- ggplot(sem_df3, aes(x = numberOfBeads, y = prop)) +
   ggtitle("Rep 3 (Regev)") + labs(x = "# beads / droplet", y = "% of total") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 95)) 
 
-cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, nrow = 1), 
-                file = "out_pdfs/barcharts_outPDFs.pdf", width = 5.5, height = 2)
+#cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, nrow = 1),   file = "out_pdfs/barcharts_outPDFs.pdf", width = 5.5, height = 2)
 
 plot_df <- data.frame(
   dataset = rep(c("Rep1", "Rep2", "Rep3", "Zheng"), 2),
@@ -80,8 +79,7 @@ pout <- ggplot(plot_df, aes(x = doublet, y = value, color = dataset)) +
   ggtitle("  ") + labs(x = "affected by doublet", y = "% of barcodes", color = "") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 100)) 
 
-cowplot::ggsave(pout, 
-                file = "out_pdfs/affected_barcodes.pdf", width = 2.3, height = 2)
+#cowplot::ggsave(pout,   file = "out_pdfs/affected_barcodes.pdf", width = 2.3, height = 2)
 
 beads_df <- data.frame(
   dataset = rep(c("Rep1", "Rep2", "Rep3", "Zheng"), 3),
@@ -99,7 +97,6 @@ pouts2 <- ggplot(beads_df, aes(x = nBeads, y = value, color = dataset)) +
   ggtitle("  ") + labs(x = "# beads / droplet", y = "% of droplets", color = "") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 100)) + theme(legend.position = "none")
 
-cowplot::ggsave(pouts2, 
-                file = "out_pdfs/beads_per_droplet.pdf", width = 2, height = 2)
+# cowplot::ggsave(pouts2,   file = "out_pdfs/beads_per_droplet.pdf", width = 2, height = 2)
 
 

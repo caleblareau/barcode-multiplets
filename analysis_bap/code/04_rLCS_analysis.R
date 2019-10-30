@@ -2,6 +2,7 @@ library(dplyr)
 library(data.table)
 library(stringr)
 library(BuenColors)
+source("00_functions.R")
 
 # Import barcode pairs
 file <- "../data/pub_5k/atac_v1_pbmc_5k_possorted_bam.barcodeTranslate.tsv"; idx <- 8
@@ -61,7 +62,7 @@ n_heterogeneous_beads <- sum(means_vec >= 6)
 n_barcodes_from_heterogeneous_beads <- sum(qdf2$count)
 
 # double count physical doublets but remove extras from heterogeneous beads
-n_total_beads <- dim(dd)[1] + sum((qdf$n -1) * (qdf$count)) - sum((qdf2$n -1) * (qdf2$count))
+n_total_beads <- dim(dd)[1] - sum((qdf2$n -1) * (qdf2$count))
 n_heterogeneous_beads/n_total_beads
 
 sum(means_vec >= 6)/length(means_vec)
@@ -78,8 +79,17 @@ pct_vec <-  function(vec){
   }) %>% mean()
 }
 
-sc <- fread("../data/pub_5k/atac_v1_pbmc_5k_singlecell.csv") %>% filter(cell_id != "None") %>% data.f
+sc <- fread("../data/pub_5k/atac_v1_pbmc_5k_singlecell.csv") %>% filter(cell_id != "None") %>% data.frame
+sc$lib_size <- sapply(1:dim(sc), function(i){
+  estimateLibrarySize(sc[i,"passed_filters"] + sc[i,"duplicate"], sc[i,"passed_filters"])
+})
 
+tenx_bc_multiplets_from_barcode_similarity <- dd %>% filter(V2 %in% multiplets_from_barcode_similarity) %>% pull(V1) %>% as.character()
+tenx_bc_multiplets_non_barcode_similarity <- dd %>% filter(V2 %in% multiplets_non_barcode_similarity) %>% pull(V1) %>% as.character()
+
+lib_size_complex <- sc %>% filter(barcode %in% tenx_bc_multiplets_from_barcode_similarity ) %>% pull(lib_size) 
+lib_size_multibead <- sc %>% filter(barcode %in% tenx_bc_multiplets_non_barcode_similarity ) %>% pull(lib_size)
+ks.test(lib_size_complex,lib_size_multibead)
 compute_percent_differences_vector <- function(bc_groups){
   vec_out <- sapply(bc_groups, function(bc_group){
     bcs <- dd %>% filter(V2 == bc_group) %>% pull(V1) %>% as.character
@@ -101,7 +111,7 @@ p00 <- ggplot(pct_df, aes(x = type, y = value, color = type)) +
    labs(x = "Inferred multiplet type", y = "Mean % difference of log2 fragments") +
   pretty_plot(fontsize = 8) + L_border()+
   theme(legend.position = "none") 
-cowplot::ggsave(p00, file = "../plots/pct_diff_amount.pdf", width = 1.3, height = 2)
+#cowplot::ggsave(p00, file = "../plots/pct_diff_amount.pdf", width = 1.3, height = 2)
 
 # Plot the distance
 p0 <- ggplot(data.frame(means_vec), aes(x = means_vec)) +
