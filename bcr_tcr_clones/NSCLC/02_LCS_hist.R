@@ -5,6 +5,7 @@ library(stringdist)
 library(data.table)
 library(BuenColors)
 library(qualV)
+"%ni%" <- Negate("%in%")
 
 # Filter down for consensus clonotypes
 bcell <- read.table("../data/nsclc/vdj_v1_hs_nsclc_b_all_contig_annotations.csv", sep = ",", header = TRUE, stringsAsFactors = FALSE)
@@ -37,7 +38,7 @@ count_pair_LCS <- function(in_df, seed = 0){
     return(value)
   }
   
-  # Determine Hamminng distance depending on degree of bead merging
+  # Determine rLCS distance depending on degree of bead merging
   unique_clone_id <-df %>% pull(raw_clonotype_id) %>% unique()
   
   dist_df <- lapply(unique_clone_id, function(clone_name){
@@ -47,7 +48,7 @@ count_pair_LCS <- function(in_df, seed = 0){
     if(length(barcodes) > 1){
       comb_mat <- combn(barcodes, 2)
       
-      # Determine pair-wise Hamming distances
+      # Determine pair-wise LCS distances
       dff <- lapply(1:dim(comb_mat)[2], function(i){
         dfo <- data.frame(barcode1 = comb_mat[1,i], barcode2 =  comb_mat[2,i], clone_name,
                           nbarcodes = length(barcodes),
@@ -57,6 +58,42 @@ count_pair_LCS <- function(in_df, seed = 0){
     }
     dff 
   }) %>% rbindlist()
+  
+  if(FALSE){
+    # Try to infer the degree of complex beads from the TCR data
+    cc <- 0
+    dist_df_filt <- dist_df %>% filter(LCS >= 6)
+    barcode_universe <- gsub("-1", "", df$barcode)
+    vec_length <- c()
+    out_df_count <- data.frame(barcode = '', count = 0)
+    while(length(barcode_universe) > 0){
+      barcode <- barcode_universe[1]
+      barcode_combine <- barcode
+      
+      friendsRow1 <- which(barcode ==  dist_df_filt[,"barcode1", drop = TRUE])
+      if(length(friendsRow1) > 0){
+        friends1 <- as.character(dist_df_filt[friendsRow1,"barcode2"])
+        friends1 <- friends1[friends1 %in% barcode_universe]
+        barcode_combine <- c(barcode_combine, friends1)
+      }
+      
+      # Find friends that are similarly implicated and append from Barcode 2
+      friendsRow2 <- which(barcode ==  dist_df_filt[,"barcode2", drop = TRUE])
+      if(length(friendsRow2) > 0){
+        friends2 <- as.character(dist_df_filt[friendsRow2,"barcode1"])
+        friends2 <- friends2[friends2 %in% barcode_universe]
+        barcode_combine <- c(barcode_combine, friends2)
+      }
+      barcode_universe <- barcode_universe[barcode_universe %ni% barcode_combine]
+      cc = cc + 1
+      vec_length <- c(vec_length, length(barcode_combine))
+      out_df_count <- rbind(out_df_count, data.frame(barcode = barcode_combine, count = length(barcode_combine)))
+    }
+    length(vec_length)
+    # Proportion of complex beads
+    sum(vec_length > 1)/length(vec_length)
+    
+  }
   
   # Summarize values and append zeros if necessary
   quant_df <- data.frame(value =  as.numeric(names(table(dist_df$LCS))), 

@@ -9,6 +9,12 @@ one_multinom_generator <- function(prob_vec){
   which(1==rmultinom(n = 1, size = 1,prob = prob_vec)[,1]) %>% unname()
 }
 
+# probls <- c(0.85, 0.10, 0.02, 0.02, 0.01)
+probs <- c(0.93, 0.05, 0.01, 0.005, 0.005)
+val <- c(1, 2, 3, 4, 5)
+
+cat(sum(val[-1]*probs[-1])/sum(val*probs))
+
 make_plot_corrected_clonotypes <- function(file, what){
   
   # Filter down for consensus clonotypes
@@ -36,7 +42,7 @@ make_plot_corrected_clonotypes <- function(file, what){
     
     # Generate putative multiple draw
     set.seed(seed_exp)
-    probs <- c(0.85, 0.1, 0.02, 0.02, 0.01)
+
     multiplet_draw <- rmultinom(n = total_barcodes, size = 1,prob = probs) %>% melt() %>%
       filter(value != 0) %>% pull(Var1) 
     
@@ -104,7 +110,7 @@ make_plot_corrected_clonotypes <- function(file, what){
     geom_bar(color = "black", stat = "identity", width = 0.5,position = "dodge") +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position = position_dodge(width = 0.5)) +
     pretty_plot(fontsize = 7) + L_border() +
-    scale_y_continuous(expand = c(0,0), limits = c(70, 90)) +
+    scale_y_continuous(expand = c(0,0), limits = c(0, 90)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(x = "# Cells / Clone", y = "% of Cells in Library") +
     scale_fill_manual(values = c("darkgrey", "lightgrey"))
@@ -120,8 +126,10 @@ make_plot_corrected_clonotypes <- function(file, what){
     scale_fill_manual(values = c("darkgrey", "lightgrey")) +
     theme(legend.position = "none")
   
-  
+  cowplot::ggsave(cowplot::plot_grid(p1, ncol = 1), file = paste0("plots/",what,"_big_adjusted.pdf"), width = 2, height = 1.3)
   cowplot::ggsave(cowplot::plot_grid(p2, ncol = 1), file = paste0("plots/",what,"_adjusted.pdf"), width = 2, height = 1.3)
+  write.table(total_df, file = paste0("plots/", what, "_sourceData.tsv"), sep =  "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)
+  
   what
 }
 

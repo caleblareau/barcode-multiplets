@@ -1,0 +1,41 @@
+0.0s - Identifying candidate barcode for gel bead multiplet detection...
+1.57s - Identified 14,170 total barcodes for gel bead multiplet detection.
+Minimum fragment count for included barcodes of 2,000.
+1.57s - Initializing linkage matrices...
+1.57s - Gel bead linkage matrix initialized, memory used: 803,155,600 bytes.
+2.3s - Part A linkage matrix initialized:
+shape (1, 4, 384, 480, 480)
+memory used: 1,415,577,600 bytes
+2.3s - Part B linkage matrix initialized:
+shape (1, 4, 480, 384, 384)
+memory used: 1,132,462,080 bytes
+2.3s - Beginning processing of fragment file...
+2.32s - Beginning processing of contig chr1
+4.0m 45.8s - Beginning processing of contig chr2
+8.0m 34.47s - Beginning processing of contig chr3
+11.0m 36.0s - Beginning processing of contig chr4
+13.0m 51.38s - Beginning processing of contig chr5
+16.0m 26.95s - Beginning processing of contig chr6
+19.0m 24.66s - Beginning processing of contig chr7
+21.0m 47.43s - Beginning processing of contig chr8
+23.0m 49.03s - Beginning processing of contig chr9
+25.0m 46.95s - Beginning processing of contig chr10
+28.0m 1.99s - Beginning processing of contig chr11
+30.0m 34.63s - Beginning processing of contig chr12
+33.0m 5.0s - Beginning processing of contig chr13
+34.0m 16.21s - Beginning processing of contig chr14
+35.0m 57.88s - Beginning processing of contig chr15
+37.0m 29.84s - Beginning processing of contig chr16
+39.0m 17.74s - Beginning processing of contig chr17
+41.0m 44.8s - Beginning processing of contig chr18
+42.0m 43.11s - Beginning processing of contig chr19
+45.0m 7.88s - Beginning processing of contig chr20
+46.0m 23.36s - Beginning processing of contig chr21
+46.0m 58.65s - Beginning processing of contig chr22
+47.0m 59.1s - Beginning processing of contig chrX
+49.0m 3.7s - Beginning processing of contig chrY
+49.0m 7.89s - Identifying gel bead multiplets
+49.0m 9.24s - Identifying barcode multiplets
+53.0m 44.04s - Excluding barcodes for species 
+53.0m 44.04s - Original run had 5,453 total cell barcodes
+54.0m 52.64s - After multiplet exclusions, have 5,034 total cell barcodes
