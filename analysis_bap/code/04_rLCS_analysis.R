@@ -5,8 +5,8 @@ library(BuenColors)
 source("00_functions.R")
 
 # Import barcode pairs
-file <- "../data/pub_5k/atac_v1_pbmc_5k_possorted_bam.barcodeTranslate.tsv"; idx <- 8
 file <- "../data/sai/possorted_bam.barcodeTranslate.tsv"; idx <- 4
+file <- "../data/pub_5k/atac_v1_pbmc_5k_possorted_bam.barcodeTranslate.tsv"; idx <- 8
 
 dd <- fread(file, header = FALSE)
 ss <- str_split_fixed(dd[[2]], "_", 8)
@@ -61,11 +61,10 @@ n_heterogeneous_beads <- sum(means_vec >= 6)
 
 n_barcodes_from_heterogeneous_beads <- sum(qdf2$count)
 
-# double count physical doublets but remove extras from heterogeneous beads
-n_total_beads <- dim(dd)[1] - sum((qdf2$n -1) * (qdf2$count))
-n_heterogeneous_beads/n_total_beads
+# total beads are singlets + n*(physical multiplets) + (# complex multiplets)
+n_total_beads <- sum(ss[,idx] == "N01") + sum(as.numeric(gsub("N0", "", str_split_fixed(multiplets_non_barcode_similarity, "_", 8)[,idx]))) + n_heterogeneous_beads
+n_heterogeneous_beads/n_total_beads*100
 
-sum(means_vec >= 6)/length(means_vec)
 
 # Compare the abundances between the types of multiplets
 pct_diff <- function(a,b){

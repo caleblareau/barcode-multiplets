@@ -17,6 +17,14 @@ make_sem_df <- function(long_raw){
   sem_df
 }
 
+make_points_df <- function(long_raw){
+  pts_df <- long_raw %>% group_by(variable) %>% 
+    mutate(totalBeadsFOV = sum(value)) %>%
+    ungroup() %>%
+    mutate(prop = value/totalBeadsFOV *100) 
+  pts_df
+}
+
 make_odf <- function(long_raw){
   
   long_raw %>% 
@@ -42,28 +50,35 @@ odf1 <- make_odf(long_raw1)
 odf2 <- make_odf(long_raw2)
 odf3 <- make_odf(long_raw3)
 
+pt1 <- make_points_df(long_raw1)
+pt2 <- make_points_df(long_raw2)
+pt3 <- make_points_df(long_raw3)
+
 p1 <- ggplot(sem_df1, aes(x = numberOfBeads, y = prop)) +
-  geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
+  #geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
   pretty_plot(fontsize = 8) + L_border() +
-  geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
+  geom_quasirandom(data = pt1, size = 0.3)+
+  #geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
   ggtitle("Rep 1") + labs(x = "# beads / droplet", y = "% of total") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 95)) 
 
 p2 <- ggplot(sem_df2, aes(x = numberOfBeads, y = prop)) +
-  geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
+  #geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
   pretty_plot(fontsize = 8) + L_border() +
-  geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
+  geom_quasirandom(data = pt2, size = 0.3)+
+  #geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
   ggtitle("Rep 2") + labs(x = "# beads / droplet", y = "% of total") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 95)) 
 
 p3 <- ggplot(sem_df3, aes(x = numberOfBeads, y = prop)) +
-  geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
+  #geom_bar(fill = "lightgrey", color = "black", stat = "identity") +
   pretty_plot(fontsize = 8) + L_border() +
-  geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
+  geom_quasirandom(data = pt3, size = 0.3)+
+  #geom_errorbar(aes(ymin=prop-sem, ymax=prop+sem), width=.2) +
   ggtitle("Rep 3 (Regev)") + labs(x = "# beads / droplet", y = "% of total") +
   scale_y_continuous(expand = c(0,0), limits = c(0, 95)) 
 
-#cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, nrow = 1),   file = "out_pdfs/barcharts_outPDFs.pdf", width = 5.5, height = 2)
+cowplot::ggsave(cowplot::plot_grid(p1, p2, p3, nrow = 1),   file = "out_pdfs/barcharts_outPDFs.pdf", width = 5.5, height = 2)
 
 plot_df <- data.frame(
   dataset = rep(c("Rep1", "Rep2", "Rep3", "Zheng"), 2),
